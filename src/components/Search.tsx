@@ -91,19 +91,25 @@ export default ({ albums }: { albums: Album[] }) => {
           />
           <hr className="border-zinc-900" />
           <div className="py-4 absolute bg-zinc-800 rounded-b-md w-full ">
-            {matchingAlbums.map((album) => {
-              return (
-                <SearchItem
-                  name={album["im:name"].label}
-                  artist={album["im:artist"].label}
-                  image={album["im:image"][1].label}
-                  id={album.id.attributes["im:id"]}
-                  key={album.id.attributes["im:id"]}
-                  href={`/album/${createAlbumSlug(album)}`}
-                  selectedId={$selectedId}
-                />
-              );
-            })}
+            {matchingAlbums.length ? (
+              matchingAlbums.map((album) => {
+                return (
+                  <SearchItem
+                    name={album["im:name"].label}
+                    artist={album["im:artist"].label}
+                    image={album["im:image"][1].label}
+                    id={album.id.attributes["im:id"]}
+                    key={album.id.attributes["im:id"]}
+                    href={`/album/${createAlbumSlug(album)}`}
+                    selectedId={$selectedId}
+                  />
+                );
+              })
+            ) : (
+              <div className="text-white text-center py-4">
+                No results found
+              </div>
+            )}
           </div>
         </div>
       </div>
