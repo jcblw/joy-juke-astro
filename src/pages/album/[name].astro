@@ -32,7 +32,7 @@ const songs = albumData.results.filter((result): result is Song => result.wrappe
   <Search client:only albums={albums} />
   <main class="w-full max-w-full z-0 relative">
     <AlbumHeader 
-      client:idle 
+      client:load 
       contentType={entry['im:contentType']['im:contentType'].attributes.label}
       title={entry['im:name'].label} 
       backgroundImage={entry['im:image'][0].label}  

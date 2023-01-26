@@ -34,9 +34,16 @@ export default ({ albums }: { albums: Album[] }) => {
         window._search.showModal();
       }
     };
+    const showModal = window._search.showModal;
+    window._search.showModal = () => {
+      showModal.call(window._search);
+      // Need this hack to get Safari to focus the input
+      window._search.querySelector("input")?.focus();
+    };
     window.addEventListener("keydown", handleShortcut);
     return () => {
       window.removeEventListener("keydown", handleShortcut);
+      window._search.showModal = showModal;
     };
   }, []);
 
