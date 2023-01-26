@@ -12,7 +12,7 @@ const entries = data.feed.entry;
 
 ---
 
-<Layout title="JoyJuke">
+<Layout title="JoyJuke" description={`JoyJuke top albums like: ${entries.slice(0,5).map(entry => entry["im:name"]?.label).join(', ')}`}>
 	<Search client:only albums={entries} />
   <main class="w-full pb-5 pl-10 pr-10 max-w-full z-0 relative">
 		<Header client:idle title="JoyJuke" />
