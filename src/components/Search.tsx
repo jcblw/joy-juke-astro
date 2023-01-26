@@ -4,6 +4,7 @@ import { searchQuery, selectedId } from "../store/search";
 import type { Album } from "../types";
 import Image from "./Image";
 import { createAlbumSlug } from "../lib/url";
+import SearchItem from "./SearchItem";
 
 export default ({ albums }: { albums: Album[] }) => {
   const $searchQuery = useStore(searchQuery);
@@ -57,8 +58,18 @@ export default ({ albums }: { albums: Album[] }) => {
 
   return (
     <dialog id="_search" className="m-0 p-0 backdrop-blur-sm">
-      <div className="w-full h-full flex items-start mt-4 md:items-center md:mt-0 justify-center">
-        <div className="w-1/2 min-w-fit bg-zinc-800 rounded-t-md relative">
+      <div
+        className="w-full h-full flex items-start mt-4 md:items-center md:mt-0 justify-center"
+        onClick={(e) => {
+          window._search.close();
+        }}
+      >
+        <div
+          className="w-1/2 min-w-fit bg-zinc-800 rounded-t-md relative"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <input
             name="search-query"
             type="text"
@@ -75,36 +86,15 @@ export default ({ albums }: { albums: Album[] }) => {
           <div className="py-4 absolute bg-zinc-800 rounded-b-md w-full ">
             {matchingAlbums.map((album) => {
               return (
-                <div
-                  className={`flex flex-row items-center px-8 py-2 hover:bg-zinc-700 active:bg-zinc-900 ${
-                    $selectedId === album.id.attributes["im:id"]
-                      ? "bg-zinc-900"
-                      : ""
-                  }`}
-                  key={album.id?.label}
-                  onKeyUp={(e) => {
-                    if (e.key === "Enter") {
-                      window.location.href = `/album/${createAlbumSlug(album)}`;
-                    }
-                  }}
-                  onClick={() => {
-                    window.location.href = `/album/${createAlbumSlug(album)}`;
-                  }}
-                >
-                  <Image
-                    src={album["im:image"][1].label}
-                    alt={album["im:name"]?.label}
-                    className="w-10 h-10 rounded-md"
-                  />
-                  <div className="ml-4">
-                    <div className="text-white font-bold">
-                      {album["im:name"]?.label}
-                    </div>
-                    <div className="text-slate-400">
-                      {album["im:artist"]?.label}
-                    </div>
-                  </div>
-                </div>
+                <SearchItem
+                  name={album["im:name"].label}
+                  artist={album["im:artist"].label}
+                  image={album["im:image"][1].label}
+                  id={album.id.attributes["im:id"]}
+                  key={album.id.attributes["im:id"]}
+                  href={`/album/${createAlbumSlug(album)}`}
+                  selectedId={$selectedId}
+                />
               );
             })}
           </div>
