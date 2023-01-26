@@ -1,0 +1,26 @@
+---
+import { createAlbumSlug } from '../lib/url';
+import type { Album } from '../types';
+import Image from './Image';
+
+export interface Props {
+  title: string;
+  body: string;
+  image: string;
+	href: string;
+}
+
+
+const { image, title, body, href, album } = Astro.props;
+---
+
+<li class="flex w-[100%] md:w-[200px] cursor-pointer hover:bg-zinc-700 active:bg-zinc-900 focus:bg-zinc-700 outline-0 transition-colors rounded-md bg-zinc-800 flex-col p-5 overflow-hidden" onclick={`window.location.href = '${href}';`}>
+	<Image client:idle className="w-full rounded-sm select-none" src={image} alt={title} />
+	<h2 class="select-none text-white text-lg font-bold ml-0 pb-1 pt-5 whitespace-nowrap truncate overflow-hidden w-full">
+		{title}
+	</h2>
+	<p class="select-none text-zinc-400 text-sm ml-0">
+		{body}
+	</p>
+</li>
+

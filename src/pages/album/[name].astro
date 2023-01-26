@@ -1,0 +1,77 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Card from "../../components/Card.astro";
+import Header from "../../components/Header";
+import Search from "../../components/Search";
+import type { Album, Collection, Song } from "../../types";
+import { createAlbumSlug } from "../../lib/url";
+import AlbumHeader from "../../components/AlbumHeader";
+import TrackTime from "../../components/TrackTime.astro";
+
+// grab params and split find the correct album
+export async function getStaticPaths() {
+  const response = await fetch('https://itunes.apple.com/us/rss/topalbums/limit=100/json');
+const data = await response.json() as { feed: { entry: Album[] } }
+const entries = data.feed.entry;
+
+  const paths = entries.map((entry) => ({
+    params: { 
+      name : createAlbumSlug(entry)
+    },
+    props: { entry, albums: entries }
+  }));
+  return paths
+}
+
+const entry = Astro.props.entry as Album;
+const albums = Astro.props.albums as Album[];
+const albumResp = await fetch(`https://itunes.apple.com/lookup?id=${entry.id.attributes['im:id']}&entity=song`);
+const albumData = await albumResp.json() as { results: (Song | Collection)[] };
+const songs = albumData.results.filter((result): result is Song => result.wrapperType === 'track');
+
+---
+
+<Layout title={`${entry['im:name'].label} - ${entry['im:artist'].label}`}>
+  <Search client:only albums={albums} />
+  <main class="w-full max-w-full z-0 relative">
+    <AlbumHeader 
+      client:idle 
+      contentType={entry['im:contentType']['im:contentType'].attributes.label}
+      title={entry['im:name'].label} 
+      backgroundImage={entry['im:image'][0].label}  
+      artist={entry['im:artist'].label}
+      image={entry['im:image'][2].label}
+    />
+    <div class="pb-20 pl-10 pr-10 w-full">
+      <p class="text-md text-slate-400 pb-2">
+        {entry.rights.label}
+      </p>
+      <p class="text-lg text-white pb-10">
+        <span class="font-bold">Released:</span>
+        {entry['im:releaseDate'].attributes.label}
+      </p>
+      <h2 class="text-3xl font-bold text-white pb-4">Songs ({songs.length})</h2>
+      <div>
+        {songs.map((song) => (
+          <>
+            <div class="p-3 flex items-center">
+              <div>
+                <p class="text-lg text-slate-400 mr-5">{song.trackNumber}</p>
+              </div>
+              <div class="flex-1">
+                <h6 class="text-xl text-white">{song.trackName}</h6>
+                <p class="text-md text-slate-400">{song.artistName}</p>
+              </div>
+              <div class="flex-0 ml-5">
+                <p class="text-md text-slate-400"><TrackTime millis={song.trackTimeMillis} /></p>
+              </div>
+            </div>
+            <hr class="border-slate-800" />  
+          </>
+        ))}
+      </div>
+    </div>
+  </main> 
+</Layout>
+
+
