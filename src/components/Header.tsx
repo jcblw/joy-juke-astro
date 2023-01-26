@@ -11,7 +11,7 @@ export default ({ title }: Props) => {
         className="flex-1 select-none inline-block text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-slate-200"
         style={{ WebkitBackgroundClip: "text" }}
       >
-        {title}
+        <span className="text-black">📻</span> {title}
       </h1>
       <div className="flex-0">
         <div className="cursor-pointer p-3 rounded-full bg-slate-900 hover:bg-slate-800 active:bg-zinc-900 inline-block transition-colors">
